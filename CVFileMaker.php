@@ -71,7 +71,7 @@ class CVFileMaker extends FileMaker {
     
     if ( $inTesting ) {
       if ( $name == 'checkParams' ) {
-        return $this->checkParams( $arguments[0], $arguments[1] );
+        return $this->_checkParams( $arguments[0], $arguments[1] );
       }
     } else {
       trigger_error( 'Call to protected method CVFileMaker::' . $name .
@@ -82,14 +82,30 @@ class CVFileMaker extends FileMaker {
   }
 
   //============================================================================
-  protected function checkParams( $format, $params ) {
+  protected function _checkParams( $format, $params ) {
     // Check that the params passed are all expected in the format.
-    $validParam = true; 
+    $validParam = $validOptional = $validRequired = $validMutual = true;
+    
     foreach ( array_keys( $params ) as $param ) {
       if ( isset( $format['optional'] ) ) {
-        $isOptional = $validParam && in_array( $param, $format['optional'] );
+        $isOptional = $validOptional && in_array( $param, $format['optional'] );
+      } else {
+        $isOptional = false;
       }
-      $validParam = $validParam && $isOptional;
+      
+      if ( isset( $format['required'] ) ) {
+        $isRequired = $validRequired && in_array( $param, $format['required'] );
+      } else {
+        $isRequired = false;
+      }
+      
+      if ( isset( $format['mutual'] ) ) {
+        $isMutual = $validMutual && in_array( $param, $format['mutual'] );
+      } else {
+        $isMutual = false;
+      }
+      
+      $validParam = $isOptional || $isRequired || $isMutual;
     }
     
     return $validParam;
