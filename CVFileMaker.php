@@ -84,31 +84,20 @@ class CVFileMaker extends FileMaker {
   //============================================================================
   protected function _checkParams( $format, $params ) {
     // Check that the params passed are all expected in the format.
-    $validParam = $validOptional = $validRequired = $validMutual = true;
+    $validOptional = $validRequired = $validMutual = true;
     
     foreach ( array_keys( $params ) as $param ) {
-      if ( isset( $format['optional'] ) ) {
-        $isOptional = $validOptional && in_array( $param, $format['optional'] );
-      } else {
-        $isOptional = false;
-      }
+      $isOptional = isset( $format['optional'] )
+                    && in_array( $param, $format['optional'] );
+      $isRequired = isset( $format['required'] )
+                    && in_array( $param, $format['required'] );
+      $isMutual   = isset( $format['mutual'] )
+                    && in_array( $param, $format['mutual'] );
       
-      if ( isset( $format['required'] ) ) {
-        $isRequired = $validRequired && in_array( $param, $format['required'] );
-      } else {
-        $isRequired = false;
-      }
-      
-      if ( isset( $format['mutual'] ) ) {
-        $isMutual = $validMutual && in_array( $param, $format['mutual'] );
-      } else {
-        $isMutual = false;
-      }
-      
-      $validParam = $isOptional || $isRequired || $isMutual;
+      $isParam = $isOptional || $isRequired || $isMutual;
     }
     
-    return $validParam;
+    return $isParam;
   }
 }
 ?>

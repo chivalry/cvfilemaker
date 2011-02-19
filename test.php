@@ -94,6 +94,7 @@ class CVFileMakerTest extends UnitTestCase {
     $this->assertTrue( $test );
   }
   
+  //============================================================================
   function test__Mutual_Parameters_Should_Be_Valid() {
     $cv = new CVFileMaker;
     $format = array( 'mutual' => array( 'param1' ) );
