@@ -41,7 +41,7 @@ class CVFileMaker extends FileMaker {
       } else {
         trigger_error( 'Invalid key(s) passed to new CVFileMaker' );
       }
-    } else {
+    } elseif ( !is_null( $options ) ) {
       trigger_error(
         'Any parameters to new CVFileMaker object must be an array' );
     }
@@ -61,6 +61,38 @@ class CVFileMaker extends FileMaker {
                        $trace[0]['line'],
                       E_USER_NOTICE );
     }
+  }
+
+  //============================================================================
+  function __call( $name, $arguments ) {
+    $trace = debug_backtrace();
+    $caller = $trace[2];
+    $inTesting = preg_match( '/simpletest/', $caller['file'] );
+    
+    if ( $inTesting ) {
+      if ( $name == 'checkParams' ) {
+        return $this->checkParams( $arguments[0], $arguments[1] );
+      }
+    } else {
+      trigger_error( 'Call to protected method CVFileMaker::' . $name .
+                       '() in ' . $trace[0]['file'] . ' on line ' .
+                       $trace[0]['line'],
+                     E_USER_NOTICE );
+    }
+  }
+
+  //============================================================================
+  protected function checkParams( $format, $params ) {
+    // Check that the params passed are all expected in the format.
+    $validParam = true;
+    foreach ( array_keys( $params ) as $param ) {
+      if ( isset( $format['optional'] ) ) {
+        $isOptional = $validParam && in_array( $param, $format['optional'] );
+      }
+      $validParam = $validParam && $isOptional;
+    }
+    
+    return $validParam;
   }
 }
 ?>

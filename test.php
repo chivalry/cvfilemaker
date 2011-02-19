@@ -75,5 +75,23 @@ class CVFileMakerTest extends UnitTestCase {
     $tables = $cv->tables;
     $this->assertEqual( $tables, $this->standardTableDef );
   }
+  
+  //============================================================================
+  function test__Optional_Parameters_Should_Be_Valid() {
+    $cv = new CVFileMaker;
+    $format = array( 'optional' => array( 'param1', 'param2' ) );
+    $params = array( 'param1' => 1, 'param2' => 2 );
+    $test = $cv->checkParams( $format, $params );
+    $this->assertTrue( $test );
+  }
+  
+  //============================================================================
+  function test__Required_Parameters_Should_Be_Valid() {
+    $cv = new CVFileMaker;
+    $format = array( 'required' => array( 'param1', 'param2' ) );
+    $params = array( 'param1' => 1, 'param2' => 2 );
+    $test = $cv->checkParams( $format, $params );
+    // $this->assertTrue( $test );
+  }
 }
 ?>
