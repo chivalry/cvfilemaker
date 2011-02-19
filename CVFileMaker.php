@@ -84,7 +84,7 @@ class CVFileMaker extends FileMaker {
   //============================================================================
   protected function checkParams( $format, $params ) {
     // Check that the params passed are all expected in the format.
-    $validParam = true;
+    $validParam = true; 
     foreach ( array_keys( $params ) as $param ) {
       if ( isset( $format['optional'] ) ) {
         $isOptional = $validParam && in_array( $param, $format['optional'] );
