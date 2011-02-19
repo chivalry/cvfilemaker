@@ -58,6 +58,8 @@ class CVFileMaker extends FileMaker {
         if ( $name == 'tables' ) {
           return $this->tables;
         }
+      } else {
+        return null;
       }
     } else {
       trigger_error( 'Cannot access protected property CVFileMaker::$' .
