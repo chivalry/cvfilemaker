@@ -90,7 +90,18 @@ class CVFileMaker extends FileMaker {
       $isParam = $isOptional || $isRequired || $isMutual;
     }
     
-    return $isParam;
+    // Check that required params are present.
+    if ( isset( $format['required'] ) ) {
+      $requiredExists = false;
+      foreach( $format['required'] as $requiredParam ) {
+        $requiredExists = $requiredExists
+                          || in_array( $requiredParam, array_keys( $params ) );
+      }
+    } else {
+      $requiredExists = true;
+    }
+    
+    return $isParam && $requiredExists;
   }
 }
 ?>
