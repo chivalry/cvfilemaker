@@ -54,13 +54,7 @@ class CVFileMaker extends FileMaker {
     $inTesting = preg_match( '/simpletest/', $caller['file'] );
     
     if ( $inTesting ) {
-      if ( property_exists( $this, $name ) ) {
-        if ( $name == 'tables' ) {
-          return $this->tables;
-        }
-      } else {
-        return null;
-      }
+      return $this->$name;
     } else {
       trigger_error( 'Cannot access protected property CVFileMaker::$' .
                        $name . ' in ' . $trace[0]['file'] . ' on line ' .
