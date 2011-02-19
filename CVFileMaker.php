@@ -26,11 +26,17 @@ class CVFileMaker extends FileMaker {
       
       if ( $validOptions ) {
         parent::__construct();
-    
-        $this->setProperty( 'database', $options['properties']['database'] );
-        $this->setProperty( 'hostspec', $options['properties']['hostspec'] );
-        $this->setProperty( 'username', $options['properties']['username'] );
-        $this->setProperty( 'password', $options['properties']['password'] );
+        
+        if ( isset( $options['properties'] ) ) {
+          $this->setProperty( 'database', $options['properties']['database'] );
+          $this->setProperty( 'hostspec', $options['properties']['hostspec'] );
+          $this->setProperty( 'username', $options['properties']['username'] );
+          $this->setProperty( 'password', $options['properties']['password'] );
+        }
+        
+        if ( isset( $options['tables'] ) ) {
+          $this->tables = $options['tables'];
+        }
 
       } else {
         trigger_error( 'Invalid key(s) passed to new CVFileMaker' );
@@ -38,6 +44,24 @@ class CVFileMaker extends FileMaker {
     } else {
       trigger_error(
         'Any parameters to new CVFileMaker object must be an array' );
+    }
+  }
+
+  //============================================================================
+  function __get( $name ) {
+    $trace = debug_backtrace();
+    $caller = $trace[1];
+    $inTesting = preg_match( '/simpletest/', $caller['file'] );
+    
+    if ( $inTesting ) {
+      if ( $name == 'tables' ) {
+        return $this->tables;
+      }
+    } else {
+      trigger_error( 'Cannot access protected property CVFileMaker::$' .
+                       $name . ' in ' . $trace[0]['file'] . ' on line ' .
+                       $trace[0]['line'],
+                      E_USER_NOTICE );
     }
   }
 }

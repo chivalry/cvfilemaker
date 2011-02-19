@@ -70,8 +70,10 @@ class CVFileMakerTest extends UnitTestCase {
   }
   
   //============================================================================
-  function test__Construction_Should_Accept_Tables_Key() {
-    
+  function test__Construction_Should_Properly_Set_Tables() {
+    $cv = new CVFileMaker( array( 'tables' => $this->standardTableDef ) );
+    $tables = $cv->tables;
+    $this->assertEqual( $tables, $this->standardTableDef );
   }
 }
 ?>
