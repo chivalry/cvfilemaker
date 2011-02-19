@@ -34,14 +34,6 @@ class CVFileMakerTest extends UnitTestCase {
     'Responses'     => array( 'layout' => 'Web>Responses',
                               'key'    => 'KP_Response_ID' ) );
   
-  private $format = array( 'required' => array( 'param1', 'param2' ),
-                           'optional' => array( 'param3', 'param4' ),
-                           'mutual'   => array( 'param5', 'param6' ) );
-  private $params = array( 'param1' => 1,
-                           'param2' => 2,
-                           'param4' => 4,
-                           'param6' => 6 );
-  
   //============================================================================
   function setUp() {
     $this->standardProperties = array( 'database' => $this->standardDB,
@@ -86,22 +78,43 @@ class CVFileMakerTest extends UnitTestCase {
   //============================================================================
   function test__Optional_Parameters_Should_Be_Valid() {
     $cv = new CVFileMaker;
-    $test = $cv->checkParams( $this->format, $this->params );
-    $this->assertTrue( $test );
+
+    $format = array( 'optional' => array( 'param1', 'param2' ) );
+    $params = array( 'param1' => 1, 'param2' => 2 );
+
+    $this->assertTrue( $cv->checkParams( $format, $params ) );
   }
   
   //============================================================================
   function test__Required_Parameters_Should_Be_Valid() {
     $cv = new CVFileMaker;
-    $test = $cv->checkParams( $this->format, $this->params );
-    $this->assertTrue( $test );
+
+    $format = array( 'required' => array( 'param1', 'param2' ) );
+    $params = array( 'param1' => 1, 'param2' => 2 );
+
+    $this->assertTrue( $cv->checkParams( $format, $params ) );
   }
   
   //============================================================================
   function test__Mutual_Parameters_Should_Be_Valid() {
     $cv = new CVFileMaker;
-    $test = $cv->checkParams( $this->format, $this->params );
-    $this->assertTrue( $test );
+
+    $format = array( 'required' => array( 'param1', 'param2' ) );
+    $params = array( 'param1' => 1, 'param2' => 2 );
+
+    $this->assertTrue( $cv->checkParams( $format, $params ) );
+  }
+  
+  //============================================================================
+  function test__Invalid_Parameters_Should_Fail() {
+    $cv = new CVFileMaker;
+
+    $format = array( 'required' => array( 'param1', 'param2' ),
+                     'optional' => array( 'param3', 'param4' ),
+                     'mutual'   => array( 'param5', 'param6' ) );
+    $params = array( 'invalid' => 0 );
+
+    $this->assertFalse( $cv->checkParams( $format, $params ) );
   }
 }
 ?>

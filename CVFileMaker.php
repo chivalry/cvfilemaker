@@ -18,13 +18,7 @@ class CVFileMaker extends FileMaker {
     $optionsFormat = array( 'optional' => array( 'tables', 'properties' ) );
     
     if ( is_array( $options ) ) {
-      $validOptions = true;
-      foreach ( array_keys( $options ) as $key ) {
-        $validOptions = $validOptions &&
-          in_array( $key, $optionsFormat['optional'] );
-      }
-      
-      if ( $validOptions ) {
+      if ( $this->_checkParams( $optionsFormat, $options ) ) {
         parent::__construct();
         
         if ( isset( $options['properties'] ) ) {
@@ -85,7 +79,6 @@ class CVFileMaker extends FileMaker {
   protected function _checkParams( $format, $params ) {
     // Check that the params passed are all expected in the format.
     $validOptional = $validRequired = $validMutual = true;
-    
     foreach ( array_keys( $params ) as $param ) {
       $isOptional = isset( $format['optional'] )
                     && in_array( $param, $format['optional'] );
