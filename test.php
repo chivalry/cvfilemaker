@@ -34,6 +34,14 @@ class CVFileMakerTest extends UnitTestCase {
     'Responses'     => array( 'layout' => 'Web>Responses',
                               'key'    => 'KP_Response_ID' ) );
   
+  private $format = array( 'required' => array( 'param1', 'param2' ),
+                           'optional' => array( 'param3', 'param4' ),
+                           'mutual'   => array( 'param5', 'param6' ) );
+  private $params = array( 'param1' => 1,
+                           'param2' => 2,
+                           'param4' => 4,
+                           'param6' => 6 );
+  
   //============================================================================
   function setUp() {
     $this->standardProperties = array( 'database' => $this->standardDB,
@@ -79,27 +87,21 @@ class CVFileMakerTest extends UnitTestCase {
   //============================================================================
   function test__Optional_Parameters_Should_Be_Valid() {
     $cv = new CVFileMaker;
-    $format = array( 'optional' => array( 'param1', 'param2' ) );
-    $params = array( 'param1' => 1, 'param2' => 2 );
-    $test = $cv->checkParams( $format, $params );
+    $test = $cv->checkParams( $this->format, $this->params );
     $this->assertTrue( $test );
   }
   
   //============================================================================
   function test__Required_Parameters_Should_Be_Valid() {
     $cv = new CVFileMaker;
-    $format = array( 'required' => array( 'param1', 'param2' ) );
-    $params = array( 'param1' => 1, 'param2' => 2 );
-    $test = $cv->checkParams( $format, $params );
+    $test = $cv->checkParams( $this->format, $this->params );
     $this->assertTrue( $test );
   }
   
   //============================================================================
   function test__Mutual_Parameters_Should_Be_Valid() {
     $cv = new CVFileMaker;
-    $format = array( 'mutual' => array( 'param1' ) );
-    $params = array( 'param1' => 1 );
-    $test = $cv->checkParams( $format, $params );
+    $test = $cv->checkParams( $this->format, $this->params );
     $this->assertTrue( $test );
   }
 }
