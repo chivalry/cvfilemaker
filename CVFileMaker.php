@@ -43,11 +43,7 @@ class CVFileMaker extends FileMaker {
 
   //============================================================================
   function __get( $name ) {
-    $trace = debug_backtrace();
-    $caller = $trace[1];
-    $inTesting = preg_match( '/simpletest/', $caller['file'] );
-    
-    if ( $inTesting ) {
+    if ( $this->_inTesting() ) {
       return $this->$name;
     } else {
       trigger_error( 'Cannot access protected property CVFileMaker::$' .
@@ -59,11 +55,7 @@ class CVFileMaker extends FileMaker {
 
   //============================================================================
   function __call( $name, $arguments ) {
-    $trace = debug_backtrace();
-    $caller = $trace[2];
-    $inTesting = preg_match( '/simpletest/', $caller['file'] );
-    
-    if ( $inTesting ) {
+    if ( $this->_inTesting() ) {
       if ( $name == 'checkParams' ) {
         return $this->_checkParams( $arguments[0], $arguments[1] );
       }
@@ -130,6 +122,17 @@ class CVFileMaker extends FileMaker {
     }
     
     return $mutualsAreExclusive;
+  }
+
+  //============================================================================
+  protected function _inTesting() {
+    $traceRecs = debug_backtrace();
+    $inTesting = false;
+    foreach ( $traceRecs as $traceRec ) {
+      $inTesting = $inTesting ||
+                   preg_match( '/simpletest/', $traceRec['file'] );
+    }
+    return $inTesting;
   }
 }
 ?>
