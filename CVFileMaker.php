@@ -91,25 +91,12 @@ class CVFileMaker extends FileMaker {
     }
     
     // Check that required params are present.
-    if ( isset( $format['required'] ) ) {
-      $requiredExists = false;
-      foreach( $format['required'] as $requiredParam ) {
-        $requiredExists = $requiredExists
-                          || in_array( $requiredParam, array_keys( $params ) );
-      }
-    } else {
-      $requiredExists = true;
-    }
+    $requiredExists = !isset( $format['required'] ) ||
+      $this->_requiredParamsExist( $format['required'], $params );
     
     // Check that mutual parameters are exclusive.
-    $mutualsAreExclusive = true;
-    if ( isset( $format['mutual'] ) ) {
-      foreach ( $format['mutual'] as $mutualSet ) {
-        $mutualsAreExclusive = $mutualsAreExclusive &&
-          ( count( array_intersect( array_values( $mutualSet ),
-                                    array_keys( $params ) ) ) == 1 );
-      }
-    }
+    $mutualsAreExclusive = !isset( $format['mutual'] ) ||
+      $this->_mutualParamsAreExclusive( $format['mutual'], $params );
     
     return $isParam && $requiredExists && $mutualsAreExclusive;
   }
@@ -121,6 +108,28 @@ class CVFileMaker extends FileMaker {
       $mutualParams = array_merge( $mutualParams, $mutualParamSet );
     }
     return in_array( $param, $mutualParams );
+  }
+
+  //============================================================================
+  protected function _requiredParamsExist( $requiredParams, $params ) {
+    $requiredExists = false;
+    foreach ( $requiredParams as $requiredParam ) {
+      $requiredExists = $requiredExists
+                        || in_array( $requiredParam, array_keys( $params ) );
+    }
+    return $requiredExists;
+  }
+  
+  //============================================================================
+  protected function _mutualParamsAreExclusive( $mutualParamSets, $params ) {
+    $mutualsAreExclusive = true;
+    foreach ( $mutualParamSets as $mutualSet ) {
+      $mutualsAreExclusive = $mutualsAreExclusive &&
+        ( count( array_intersect( array_values( $mutualSet ),
+                                  array_keys( $params ) ) ) == 1 );
+    }
+    
+    return $mutualsAreExclusive;
   }
 }
 ?>
