@@ -71,8 +71,8 @@ class CVFileMakerTest extends UnitTestCase {
   
   //============================================================================
   function test__Construction_Should_Properly_Set_Tables() {
-    $cv = new CVFileMaker( array( 'tables' => $this->standardTableDef ) );
-    $this->assertEqual( $cv->tables, $this->standardTableDef );
+    $cv = new CVFileMaker( array( 'tables' => $this->customTableDef ) );
+    $this->assertEqual( $cv->tables, $this->customTableDef );
   }
   
   //============================================================================
@@ -134,6 +134,39 @@ class CVFileMakerTest extends UnitTestCase {
     $params = array( 'param1' => 1, 'param2' => 2 );
     
     $this->assertFalse( $cv->checkParams( $format, $params ) );
+  }
+  
+  //============================================================================
+  function test__Incomplete_Tables_Should_Get_Default_Values() {
+    $cv = new CVFileMaker( array( 'properties' => $this->standardProperties ) );
+    
+    $cv->setTables( $this->standardTableDef );
+    $definedTables = $cv->tables;
+    
+    $globalTableKey    = $definedTables['Globals']['key'];
+    $globalTableLayout = $definedTables['Globals']['layout'];
+    $quotesTableKey    = $definedTables['Quotes']['key'];
+    $quotesTableLayout = $definedTables['Quotes']['layout'];
+    
+    $this->assertEqual( $globalTableKey,    'gOne' );
+    $this->assertEqual( $globalTableLayout, 'Web>Globals' );
+    $this->assertEqual( $quotesTableKey,    'ID' );
+    $this->assertEqual( $quotesTableLayout, 'Web>Quotes' );
+  }
+  
+  //============================================================================
+  function test__FindAll_Should_Get_Every_Record() {
+    // Use standard FileMaker object to get the records without CVFileMaker
+    $cv = new CVFileMaker( array( 'properties' => $this->standardProperties,
+                                  'tables'     => $this->standardTableDef ) );
+    $findAllCmd = $cv->newFindAllCommand( 'Web>Users' );
+    $result = $findAllCmd->execute();
+    $baseCount = $result->getFoundSetCount();
+    
+    $result = $cv->findAll( array( 'table' => 'Users' ) );
+    $testCount = $result->getFoundSetCount();
+    
+    $this->assertEqual( $baseCount, $testCount );
   }
 }
 ?>

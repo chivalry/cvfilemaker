@@ -29,7 +29,7 @@ class CVFileMaker extends FileMaker {
         }
         
         if ( isset( $options['tables'] ) ) {
-          $this->tables = $options['tables'];
+          $this->setTables( $options['tables'] );
         }
 
       } else {
@@ -67,6 +67,59 @@ class CVFileMaker extends FileMaker {
     }
   }
 
+  //============================================================================
+  function setTables( $tables ) {
+    $t = array();
+    
+    foreach ( $tables as $table => $values ) {
+      // If the table var is a string, use it as the base.
+      if ( is_string( $table ) ) {
+        $tName = $table;
+        $tLayout = isset( $values['layout'] ) ? $values['layout']
+                                              : self::LO_PREFIX . $tName;
+        $tKey = isset( $values['key'] ) ? $values['key']
+                                        : ( $tName == 'Globals' ? 'gOne'
+                                          : self::DEFAULT_PK );
+      
+      // If the table var is not a string, no options were given and the
+      //   name is found in the value.
+      } else {
+        $tName = $values;
+        $tLayout = self::LO_PREFIX . $tName;
+        $tKey = $tName == 'Globals' ? 'gOne' : self::DEFAULT_PK;
+      }
+      
+      $t[$tName] = array( 'layout' => $tLayout, 'key' => $tKey );
+    }
+    
+    $this->tables = $t;
+  }
+
+  //============================================================================
+  function findAll( $options ) {
+    $format = array( 'required' => array( 'table' ),
+                     'optional' => array( 'sort_orders', 'return' ) );
+    
+    if ( $this->_checkParams( $format, $options ) ) {
+      $this->table = $options['table'];
+      $sortOrders = isset( $options['sort_orders'] ) ? $options['sort_orders']
+                                                     : null;
+      $ret = isset( $options['return'] ) ? $options['return'] : $this->return;
+      
+      $findAllCmd = $this->newFindAllCommand( $this->_layout() );
+      if ( $sortOrders ) {
+        foreach ( $sortOrders as $sortOrder ) {
+          $findCmd->addSortRule( $sortOrder['field'],
+                                 $sortOrder['precedence'],
+                                 $sortOrder['order'] );
+        }
+      }
+      $result = $findAllCmd->execute();
+      
+      return $ret = 'result' ? $result : $result->getRecords();
+    }
+  }
+  
   //============================================================================
   protected function _checkParams( $format, $params ) {
     // Check that the params passed are all expected in the format.
@@ -133,6 +186,16 @@ class CVFileMaker extends FileMaker {
                    preg_match( '/simpletest/', $traceRec['file'] );
     }
     return $inTesting;
+  }
+  
+  //============================================================================
+  protected function _layout() {
+    return $this->tables[$this->table]['layout'];
+  }
+
+  //============================================================================
+  protected function _key() {
+    return $this->tables[$this->table]['key'];
   }
 }
 ?>
