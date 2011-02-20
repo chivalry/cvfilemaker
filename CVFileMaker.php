@@ -42,7 +42,7 @@ class CVFileMaker extends FileMaker {
   }
 
   //============================================================================
-  function __get( $name ) {
+  public function __get( $name ) {
     if ( $this->_inTesting() ) {
       return $this->$name;
     } else {
@@ -54,7 +54,7 @@ class CVFileMaker extends FileMaker {
   }
 
   //============================================================================
-  function __call( $name, $arguments ) {
+  public function __call( $name, $arguments ) {
     if ( $this->_inTesting() ) {
       if ( $name == 'checkParams' ) {
         return $this->_checkParams( $arguments[0], $arguments[1] );
@@ -68,7 +68,7 @@ class CVFileMaker extends FileMaker {
   }
 
   //============================================================================
-  function setTables( $tables ) {
+  public function setTables( $tables ) {
     $t = array();
     
     foreach ( $tables as $table => $values ) {
@@ -96,7 +96,7 @@ class CVFileMaker extends FileMaker {
   }
 
   //============================================================================
-  function findAll( $options ) {
+  public function findAll( $options ) {
     $format = array( 'required' => array( 'table' ),
                      'optional' => array( 'sort_orders', 'return' ) );
     
@@ -125,10 +125,13 @@ class CVFileMaker extends FileMaker {
     // Check that the params passed are all expected in the format.
     $validOptional = $validRequired = $validMutual = true;
     foreach ( array_keys( $params ) as $param ) {
+
       $isOptional = isset( $format['optional'] )
                     && in_array( $param, $format['optional'] );
+
       $isRequired = isset( $format['required'] )
                     && in_array( $param, $format['required'] );
+
       $isMutual   = isset( $format['mutual'] )
                     && $this->_isMutual( $format['mutual'], $param );
       

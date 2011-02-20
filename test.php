@@ -11,6 +11,8 @@ class CVFileMakerTest extends UnitTestCase {
   
   private $standardProperties;
   
+  private $standardID;
+  
   private $standardTableDef = array( 'Globals', 'Quotes', 'Servers', 'Users' );
   
   private $customDB = 'ReachInsights';
@@ -45,8 +47,54 @@ class CVFileMakerTest extends UnitTestCase {
                                      'hostspec' => $this->customHS,
                                      'username' => $this->customUN,
                                      'password' => $this->customPW );
+    
+    // Create sample FileMaker records in the standard database flagged so
+    //   they can be deleted on tearDown.
+    $fm = new FileMaker;
+    $fm->setProperty( 'database', $this->standardDB );
+    $fm->setProperty( 'hostspec', $this->standardHS );
+    $fm->setProperty( 'username', $this->standardUN );
+    $fm->setProperty( 'password', $this->standardPW );
+    
+    for ( $i = 1; $i <= 2; $i++ ) {
+      $data = array( 'Email'        => 'email' . $i . '@example.com',
+                     'FirstName'    => 'First' . $i,
+                     'LastName'     => 'Last' . $i,
+                     'IsTestRecord' => 1 );
+      $addCmd = $fm->newAddCommand( 'Web>Users', $data );
+      $result = $addCmd->execute();
+      $recs = $result->getRecords();
+      $rec = $recs[0];
+      $standardID = $i == 1 ? $rec->getField( 'ID' ) : $standardID;
+      $this->tempRecIDs[] = $rec->getRecordId();
+    }
   }
   
+  //============================================================================
+  function tearDown() {
+    // Delete the samples records created in setUp.
+    $fm = new FileMaker;
+    $fm->setProperty( 'database', $this->standardDB );
+    $fm->setProperty( 'hostspec', $this->standardHS );
+    $fm->setProperty( 'username', $this->standardUN );
+    $fm->setProperty( 'password', $this->standardPW );
+    
+    $findCmd = $fm->newFindCommand( 'Web>Users' );
+    $findCmd->addFindCriterion( 'IsTestRecord', 1 );
+    $result = $findCmd->execute();
+    $recs = $result->getRecords();
+    
+    foreach ( $recs as $rec ) {
+      $recID = $rec->getRecordId();
+      $delCmd = $fm->newDeleteCommand( 'Web>Users', $recID );
+      $result = $delCmd->execute();
+    }
+    
+    $scriptCmd = $fm->newPerformScriptCommand( 'Web>Users',
+                                               'Reset User ID Serial' );
+    $scriptCmd->execute();
+  }
+
   //============================================================================
   function test__Construction_With_Parameters_Connects_To_Database() {
     $cv         = new CVFileMaker(
@@ -159,11 +207,12 @@ class CVFileMakerTest extends UnitTestCase {
     // Use standard FileMaker object to get the records without CVFileMaker
     $cv = new CVFileMaker( array( 'properties' => $this->standardProperties,
                                   'tables'     => $this->standardTableDef ) );
+
     $findAllCmd = $cv->newFindAllCommand( 'Web>Users' );
-    $result = $findAllCmd->execute();
-    $baseCount = $result->getFoundSetCount();
+    $result     = $findAllCmd->execute();
+    $baseCount  = $result->getFoundSetCount();
     
-    $result = $cv->findAll( array( 'table' => 'Users' ) );
+    $result    = $cv->findAll( array( 'table' => 'Users' ) );
     $testCount = $result->getFoundSetCount();
     
     $this->assertEqual( $baseCount, $testCount );
