@@ -168,10 +168,61 @@ class CVFileMaker extends FileMaker {
       if ( $ret == 'result' ) {
         return $result;
       } else {
-        $recs = $result->getRecords();
-        return $recs[0];
+        return $this->getFirstRecord( $result );
       }
     }
+  }
+  
+  //============================================================================
+  public function newRecord( $options ) {
+    $format = array( 'required' => array( 'table', 'data' ),
+                     'optional' => array( 'return' ) );
+    
+    if ( $this->_checkParams( $format, $options ) ) {
+      $ret = isset( $options['return'] ) ? $options['return'] : 'record';
+      
+      $this->table = $options['table'];
+      $newCmd = $this->newAddCommand( $this->_layout(), $options['data'] );
+      $result = $newCmd->execute();
+      $rec = $this->getFirstRecord( $result );
+      
+      if ( $ret == 'record' ) {
+        return $rec;
+      } else {
+        return $rec->getField( $this->_key() );
+      }
+    }
+  }
+  
+  //============================================================================
+  public function editRecord( $options ) {
+    $format = array( 'required' => array( 'table', 'data' ),
+                     'mutual'   => array( 'record_id', 'id' ) );
+    
+    $this->table = $options['table'];
+  
+    if ( isset( $options['record_id'] ) ) {
+      $recID = $options['record_id'];
+    } else {
+      $id = $options['id'];
+      $rec = $this->findById( array( 'table'  => $this->table,
+                                     'id'     => $id,
+                                     'return' => 'records' ) );
+      $recID = $rec->getRecordID();
+    }
+  
+  
+    $editCmd = $this->newEditCommand( $this->_layout(), $recID );
+    foreach ( $options['data'] as $key => $value ) {
+      $editCmd->setField( $key, $value );
+    }
+    $result = $editCmd->execute();
+  }
+  
+  //============================================================================
+  public function getFirstRecord( $result ) {
+    $recs = $result->getRecords();
+    return $recs[0];
   }
   
   //============================================================================
