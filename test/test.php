@@ -1,7 +1,7 @@
 <?php
 require_once( 'simpletest/unit_tester.php' );
 require_once( 'simpletest/reporter.php' );
-require_once( 'standard.php' );
+require_once( '../lib/standard.php' );
 
 $test = new TestSuite( 'All CVFileMaker Tests' );
 

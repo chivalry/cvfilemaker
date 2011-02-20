@@ -1,6 +1,6 @@
 <?php
-require_once( 'FileMaker.php' );
-require_once( 'standard.php' );
+require_once( 'lib/FileMaker.php' );
+require_once( 'lib/standard.php' );
 
 class CVFileMaker extends FileMaker {
   

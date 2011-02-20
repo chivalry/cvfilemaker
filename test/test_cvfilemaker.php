@@ -1,5 +1,5 @@
 <?php
-require_once( 'CVFileMaker.php' );
+require_once( '../CVFileMaker.php' );
 
 abstract class CVFileMakerTest extends UnitTestCase {
   

@@ -1,5 +1,5 @@
 <?php
-require_once( 'CVFileMaker.php' );
+require_once( '../CVFileMaker.php' );
 require_once( 'test_cvfilemaker.php' );
 
 class CVFileMakerTestParameters extends CVFileMakerTest {
