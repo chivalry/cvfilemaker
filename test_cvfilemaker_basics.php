@@ -1,37 +1,8 @@
 <?php
 require_once( 'CVFileMaker.php' );
+require_once( 'test_cvfilemaker.php' );
 
-class CVFileMakerTestBasics extends UnitTestCase {
-  
-  private $standardDB = 'BYB_MSP';
-  private $standardHS = 'http://buildyourbdr.com/';
-  private $standardUN = 'Web User';
-  private $standardPW = 'g.i.joe';
-  
-  private $standardProperties;
-  
-  private $standardTableDef = array( 'Globals', 'Quotes', 'Servers', 'Users' );
-  
-  private $customDB = 'ReachInsights';
-  private $customHS = 'http://64.71.231.45';
-  private $customUN = 'WebUser';
-  private $customPW = 'g.i.joe';
-  
-  private $customProperties;
-  
-  private $customTableDef = array(
-    'Choices'       => array( 'layout' => 'Web>Choices',
-                              'key'    => 'KP_Choices_ID' ),
-    'Exams'         => array( 'layout' => 'Web>Exams',
-                              'key'    => 'KP_Exam_ID' ),
-    'People'        => array( 'layout' => 'Web>People',
-                              'key'    => 'KP_Person_ID' ),
-    'Questions'     => array( 'layout' => 'Web>Questions',
-                              'key'    => 'KP_Question_ID' ),
-    'RecordedExams' => array( 'layout' => 'Web>RecordedExam',
-                              'key'    => 'KP_RecordedExam_ID' ),
-    'Responses'     => array( 'layout' => 'Web>Responses',
-                              'key'    => 'KP_Response_ID' ) );
+class CVFileMakerTestBasics extends CVFileMakerTest {
   
   //============================================================================
   function setUp() {
