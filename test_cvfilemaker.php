@@ -10,7 +10,8 @@ abstract class CVFileMakerTest extends UnitTestCase {
   
   protected $standardProperties;
   
-  protected $standardTableDef = array( 'Globals', 'Quotes', 'Servers', 'Users' );
+  protected $standardTableDef =
+    array( 'Globals', 'Quotes', 'Servers', 'Users' );
   
   protected $customDB = 'ReachInsights';
   protected $customHS = 'http://64.71.231.45';
@@ -32,5 +33,30 @@ abstract class CVFileMakerTest extends UnitTestCase {
                               'key'    => 'KP_RecordedExam_ID' ),
     'Responses'     => array( 'layout' => 'Web>Responses',
                               'key'    => 'KP_Response_ID' ) );
+
+  //============================================================================
+  public function setUp() {
+    $this->standardProperties = array( 'database' => $this->standardDB,
+                                       'hostspec' => $this->standardHS,
+                                       'username' => $this->standardUN,
+                                       'password' => $this->standardPW );
+                                       
+    $this->customProperties = array( 'database' => $this->customDB,
+                                     'hostspec' => $this->customHS,
+                                     'username' => $this->customUN,
+                                     'password' => $this->customPW );
+  }
+
+  //============================================================================
+  protected function newFileMaker() {
+    $fm = new FileMaker;
+    
+    $fm->setProperty( 'database', $this->standardDB );
+    $fm->setProperty( 'hostspec', $this->standardHS );
+    $fm->setProperty( 'username', $this->standardUN );
+    $fm->setProperty( 'password', $this->standardPW );
+    
+    return $fm;
+  }
 }
 ?>
