@@ -244,12 +244,12 @@ class CVFileMaker extends FileMaker {
     }
     
     // Check that required params are present.
-    $requiredExists = !isset( $format['required'] ) ||
-      $this->_requiredParamsExist( $format['required'], $params );
+    $requiredExists = !isset( $format['required'] )
+      || $this->_requiredParamsExist( $format['required'], $params );
     
     // Check that mutual parameters are exclusive.
-    $mutualsAreExclusive = !isset( $format['mutual'] ) ||
-      $this->_mutualParamsAreExclusive( $format['mutual'], $params );
+    $mutualsAreExclusive = !isset( $format['mutual'] )
+      || $this->_mutualParamsAreExclusive( $format['mutual'], $params );
     
     return $isParam && $requiredExists && $mutualsAreExclusive;
   }
