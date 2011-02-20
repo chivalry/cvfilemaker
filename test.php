@@ -11,8 +11,6 @@ class CVFileMakerTest extends UnitTestCase {
   
   private $standardProperties;
   
-  private $standardID;
-  
   private $standardTableDef = array( 'Globals', 'Quotes', 'Servers', 'Users' );
   
   private $customDB = 'ReachInsights';
@@ -50,11 +48,7 @@ class CVFileMakerTest extends UnitTestCase {
     
     // Create sample FileMaker records in the standard database flagged so
     //   they can be deleted on tearDown.
-    $fm = new FileMaker;
-    $fm->setProperty( 'database', $this->standardDB );
-    $fm->setProperty( 'hostspec', $this->standardHS );
-    $fm->setProperty( 'username', $this->standardUN );
-    $fm->setProperty( 'password', $this->standardPW );
+    $fm = $this->newFileMaker();
     
     for ( $i = 1; $i <= 2; $i++ ) {
       $data = array( 'Email'        => 'email' . $i . '@example.com',
@@ -63,21 +57,13 @@ class CVFileMakerTest extends UnitTestCase {
                      'IsTestRecord' => 1 );
       $addCmd = $fm->newAddCommand( 'Web>Users', $data );
       $result = $addCmd->execute();
-      $recs = $result->getRecords();
-      $rec = $recs[0];
-      $standardID = $i == 1 ? $rec->getField( 'ID' ) : $standardID;
-      $this->tempRecIDs[] = $rec->getRecordId();
     }
   }
   
   //============================================================================
   function tearDown() {
     // Delete the samples records created in setUp.
-    $fm = new FileMaker;
-    $fm->setProperty( 'database', $this->standardDB );
-    $fm->setProperty( 'hostspec', $this->standardHS );
-    $fm->setProperty( 'username', $this->standardUN );
-    $fm->setProperty( 'password', $this->standardPW );
+    $fm = $this->newFileMaker();
     
     $findCmd = $fm->newFindCommand( 'Web>Users' );
     $findCmd->addFindCriterion( 'IsTestRecord', 1 );
@@ -87,7 +73,7 @@ class CVFileMakerTest extends UnitTestCase {
     foreach ( $recs as $rec ) {
       $recID = $rec->getRecordId();
       $delCmd = $fm->newDeleteCommand( 'Web>Users', $recID );
-      $result = $delCmd->execute();
+      $delCmd->execute();
     }
     
     $scriptCmd = $fm->newPerformScriptCommand( 'Web>Users',
@@ -95,6 +81,15 @@ class CVFileMakerTest extends UnitTestCase {
     $scriptCmd->execute();
   }
 
+  //============================================================================
+  function newFileMaker() {
+    $fm = new FileMaker;
+    $fm->setProperty( 'database', $this->standardDB );
+    $fm->setProperty( 'hostspec', $this->standardHS );
+    $fm->setProperty( 'username', $this->standardUN );
+    $fm->setProperty( 'password', $this->standardPW );
+    return $fm;
+  }
   //============================================================================
   function test__Construction_With_Parameters_Connects_To_Database() {
     $cv         = new CVFileMaker(
