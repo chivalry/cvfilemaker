@@ -69,7 +69,7 @@ class CVFileMaker extends FileMaker {
   }
 
   //============================================================================
-  public function setTables( $tables ) {
+  public function setTables( array $tables ) {
     $t = array();
     
     foreach ( $tables as $table => $values ) {
@@ -97,7 +97,7 @@ class CVFileMaker extends FileMaker {
   }
 
   //============================================================================
-  public function findAll( $options ) {
+  public function findAll( array $options ) {
     $format = array( 'required' => array( 'table' ),
                      'optional' => array( 'sort_orders', 'return' ) );
     
@@ -122,7 +122,7 @@ class CVFileMaker extends FileMaker {
   }
   
   //============================================================================
-  public function find( $options ) {
+  public function find( array $options ) {
     $format = array( 'required' => array( 'table', 'criteria' ),
                      'optional' => array( 'sort_orders', 'return' ) );
 
@@ -153,7 +153,7 @@ class CVFileMaker extends FileMaker {
   }
 
   //============================================================================
-  public function findById( $options ) {
+  public function findById( array $options ) {
     $format = array( 'required' => array( 'table', 'id' ),
                      'optional' => array( 'return' ) );
     
@@ -174,7 +174,7 @@ class CVFileMaker extends FileMaker {
   }
   
   //============================================================================
-  public function newRecord( $options ) {
+  public function newRecord( array $options ) {
     $format = array( 'required' => array( 'table', 'data' ),
                      'optional' => array( 'return' ) );
     
@@ -195,7 +195,7 @@ class CVFileMaker extends FileMaker {
   }
   
   //============================================================================
-  public function editRecord( $options ) {
+  public function editRecord( array $options ) {
     $format = array( 'required' => array( 'table', 'data' ),
                      'mutual'   => array( 'record_id', 'id' ) );
     
@@ -220,13 +220,13 @@ class CVFileMaker extends FileMaker {
   }
   
   //============================================================================
-  public function getFirstRecord( $result ) {
+  public function getFirstRecord( FileMaker_Result $result ) {
     $recs = $result->getRecords();
     return $recs[0];
   }
   
   //============================================================================
-  protected function _checkParams( $format, $params ) {
+  protected function _checkParams( array $format, array $params ) {
     // Check that the params passed are all expected in the format.
     $validOptional = $validRequired = $validMutual = true;
     foreach ( array_keys( $params ) as $param ) {
@@ -255,7 +255,7 @@ class CVFileMaker extends FileMaker {
   }
   
   //============================================================================
-  protected function _isMutual( $mutualParamSets, $param ) {
+  protected function _isMutual( array $mutualParamSets, $param ) {
     $mutualParams = array();
     foreach ( $mutualParamSets as $mutualParamSet ) {
       $mutualParams = array_merge( $mutualParams, $mutualParamSet );
@@ -264,7 +264,8 @@ class CVFileMaker extends FileMaker {
   }
 
   //============================================================================
-  protected function _requiredParamsExist( $requiredParams, $params ) {
+  protected function _requiredParamsExist( array $requiredParams,
+                                           array $params ) {
     $requiredExists = false;
     foreach ( $requiredParams as $requiredParam ) {
       $requiredExists = $requiredExists
@@ -274,7 +275,8 @@ class CVFileMaker extends FileMaker {
   }
   
   //============================================================================
-  protected function _mutualParamsAreExclusive( $mutualParamSets, $params ) {
+  protected function _mutualParamsAreExclusive( array $mutualParamSets,
+                                                array $params ) {
     $mutualsAreExclusive = true;
     foreach ( $mutualParamSets as $mutualSet ) {
       $mutualsAreExclusive = $mutualsAreExclusive &&
