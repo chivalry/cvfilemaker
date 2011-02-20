@@ -1,5 +1,6 @@
 <?php
 require_once( 'FileMaker.php' );
+require_once( 'standard.php' );
 
 class CVFileMaker extends FileMaker {
   
@@ -117,6 +118,59 @@ class CVFileMaker extends FileMaker {
       $result = $findAllCmd->execute();
       
       return $ret = 'result' ? $result : $result->getRecords();
+    }
+  }
+  
+  //============================================================================
+  public function find( $options ) {
+    $format = array( 'required' => array( 'table', 'criteria' ),
+                     'optional' => array( 'sort_orders', 'return' ) );
+
+    if ( $this->_checkParams( $format, $options ) ) {
+      $this->table = $options['table'];
+      $criteria = $options['criteria'];
+      $sortOrders = isset( $options['sort_oders'] ) ? $options['sort_orders']
+                                                    : null;
+      $ret = isset( $options['return'] ) ? $options['return'] : $this->return;
+    
+      $findCmd = $this->newFindCommand( $this->_layout() );
+      foreach ( $criteria as $field => $value ) {
+        $field = $field == 'id' ? $this->tables[$this->table]['key'] : $field;
+        $findCmd->addFindCriterion( $field, $value );
+      }
+    
+      if ( $sortOrders ) {
+        foreach ( $sortOrders as $sortOrder ) {
+          $findCmd->addSortRule( $sortOrder['field'],
+                                 $sortOrder['precedence'],
+                                 $sortOrder['order'] );
+        }
+      }
+      $result = $findCmd->execute();
+    
+      return $ret == 'result' ? $result : $result->getRecords();
+    }
+  }
+
+  //============================================================================
+  public function findById( $options ) {
+    $format = array( 'required' => array( 'table', 'id' ),
+                     'optional' => array( 'return' ) );
+    
+    if ( $this->_checkParams( $format, $options ) ) {
+      $this->table = $options['table'];
+      $ret = isset( $options['return'] ) ? $options['return'] : $this->return;
+      
+      $opts = array( 'table'    => $options['table'],
+                     'criteria' => array( $this->_key() => $options['id'] ) );
+      $result = $this->find( $opts );
+      
+      if ( $ret == 'result' ) {
+        return $result;
+      } else {
+        $recs = $result->getRecords();
+        return $recs[0];
+      }
     }
   }
   

@@ -4,6 +4,9 @@ require_once( 'test_cvfilemaker.php' );
 
 class CVFileMakerTestOperations extends CVFileMakerTest {
   
+  protected $recID;
+  protected $ID;
+  
   //============================================================================
   function setUp() {
     parent::setup();
@@ -19,6 +22,10 @@ class CVFileMakerTestOperations extends CVFileMakerTest {
                      'IsTestRecord' => 1 );
       $addCmd = $fm->newAddCommand( 'Web>Users', $data );
       $result = $addCmd->execute();
+      $recs   = $result->getRecords();
+      $rec    = $recs[0];
+      $this->recID = $i == 1 ? $rec->getRecordId()    : $this->recID;
+      $this->ID    = $i == 1 ? $rec->getField( 'ID' ) : $this->ID;
     }
   }
   
@@ -57,6 +64,46 @@ class CVFileMakerTestOperations extends CVFileMakerTest {
     $testCount = $result->getFoundSetCount();
     
     $this->assertEqual( $baseCount, $testCount );
+  }
+  
+  //============================================================================
+  function test__Find_Should_Get_The_Right_Record() {
+    $cv = new CVFileMaker( array( 'properties' => $this->standardProperties,
+                                  'tables'     => $this->standardTableDef ) );
+    $result = $cv->find( array( 'table' => 'Users',
+                                'criteria' => array( 'ID' => $this->ID ) ) );
+    $recs = $result->getRecords();
+    $rec = $recs[0];
+    $firstName = $rec->getField( 'FirstName' );
+    
+    $this->assertEqual( $firstName, 'First1' );
+  }
+  
+  //============================================================================
+  function test__Find_Should_Return_A_Record_When_Requested() {
+    $cv = new CVFileMaker( array( 'properties' => $this->standardProperties,
+                                  'tables'     => $this->standardTableDef ) );
+    $records = $cv->find( array( 'table'    => 'Users',
+                                'criteria'  => array( 'ID' => $this->ID ),
+                                'return'    => 'record' ) );
+    $record = $records[0];
+    $firstName = $record->getField( 'FirstName' );
+    
+    $this->assertEqual( $firstName, 'First1' );
+  }
+  
+  //============================================================================
+  function test__FindById_Should_Get_The_Right_Record() {
+    $cv = new CVFileMaker( array( 'properties' => $this->standardProperties,
+                                  'tables'     => $this->standardTableDef ) );
+    $result = $cv->findById( array( 'table' => 'Users',
+                                    'id'    => $this->ID ) );
+    $records = $result->getRecords();
+    $record = $records[0];
+    vardump( compact('$record' ) );
+    $firstName = $record->getField( 'FirstName' );
+    
+    $this->assertEqual( $firstName, 'First1' );
   }
 }
 ?>
