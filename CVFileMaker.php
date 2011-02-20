@@ -84,16 +84,8 @@ class CVFileMaker extends FileMaker {
                     && in_array( $param, $format['optional'] );
       $isRequired = isset( $format['required'] )
                     && in_array( $param, $format['required'] );
-
-      if ( isset( $format['mutual'] ) ) {
-        $mutualParams = array();
-        foreach ( $format['mutual'] as $mutualParamSet ) {
-          $mutualParams = array_merge( $mutualParams, $mutualParamSet );
-        }
-        $isMutual = in_array( $param, $mutualParams );
-      } else {
-        $isMutual = false;
-      }
+      $isMutual   = isset( $format['mutual'] )
+                    && $this->_isMutual( $format['mutual'], $param );
       
       $isParam = $isOptional || $isRequired || $isMutual;
     }
@@ -120,6 +112,15 @@ class CVFileMaker extends FileMaker {
     }
     
     return $isParam && $requiredExists && $mutualsAreExclusive;
+  }
+  
+  //============================================================================
+  protected function _isMutual( $mutualParamSets, $param ) {
+    $mutualParams = array();
+    foreach ( $mutualParamSets as $mutualParamSet ) {
+      $mutualParams = array_merge( $mutualParams, $mutualParamSet );
+    }
+    return in_array( $param, $mutualParams );
   }
 }
 ?>
