@@ -284,7 +284,22 @@ class CVFileMaker extends FileMaker {
     }
   }
 
-  //============================================================================
+  /**
+   * Find the record in the passed table with the given id.
+   *
+   * This is a wrapper for FileMaker's FileMaker_Command_Find and will return
+   * either the FileMaker_Result object or the FileMaker_Record object,
+   * depending on the value of $this->return or the value of the return
+   * parameter.
+   *
+   * @param  array $options see the $format local variable for the definition of
+   *                        possible options. The id option refers to the
+   *                        primary key, not the record id.
+   * @return mixed          either a FileMaker_Result or an array of
+   *                        FileMaker_Record objects
+   * @access public
+   * @author Charles Ross
+   **/
   public function findById( array $options ) {
     $format = array( 'required' => array( 'table', 'id' ),
                      'optional' => array( 'return' ) );
