@@ -320,7 +320,21 @@ class CVFileMaker extends FileMaker {
     }
   }
   
-  //============================================================================
+  /**
+   * Create a record with the data passed.
+   *
+   * This is a wrapper for FileMaker's FileMaker_Command_Add and will return
+   * either the FileMaker_Record object or the primary key of the created
+   * record,  depending on the value of $this->return or the value of the return
+   * parameter.
+   *
+   * @param  array $options see the $format local variable for the definition of
+   *                        possible options.
+   * @return mixed          either a FileMaker_Result or the new record's
+   *                        primary key value.
+   * @access public
+   * @author Charles Ross
+   **/
   public function newRecord( array $options ) {
     $format = array( 'required' => array( 'table', 'data' ),
                      'optional' => array( 'return' ) );
