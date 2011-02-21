@@ -2,13 +2,67 @@
 require_once( 'lib/FileMaker.php' );
 require_once( 'lib/standard.php' );
 
+/**
+ * Convenience wrapper for FileMaker PHP API's FileMaker class
+ *
+ * Most of the operations performed with the FileMaker PHP API are similar and
+ * common. This class is a sub-class of the FileMaker class that wraps common
+ * operations such as finding, creating, editing and deleting records.
+ *
+ * @author Charles Ross <chivalry@mac.com>
+ * @version 1.0
+ * @copyright Charles Ross, 20 February, 2011
+ **/
 class CVFileMaker extends FileMaker {
   
+  /**
+   * The tables array that defines the schema for the database.
+   *
+   * This should be an array of the form array( 'tableName' => array( 'layout'
+   * => 'layoutName', 'key' => 'primaryKeyName' ), 'anotherTable' => ... )
+   *
+   * @var array
+   **/
   protected $tables;
+  
+  /**
+   * The current table.
+   *
+   * The name of the current table which allows the retrieval from the $tables
+   * array the names of the layout to use and the primary key name.
+   *
+   * @var string
+   **/
   protected $table;
+  
+  /**
+   * The format of the values to be returned.
+   * 
+   * Values are by default returned in the same manner used by the FileMaker
+   * class, generally returning a FileMaker_Result object. This can be
+   * overridden, especially when it's known that a single record should be
+   * returned, to return instead the record (FileMaker Record object). When
+   * creating a new record, the return could be the id of the created record.
+   *
+   * @var string
+   **/
   protected $return = 'result';
   
+  /**
+   * Default layout prefix
+   *
+   * Tables can be defined without explicit layout names and when that's the
+   * case, prefix the following constant to the table name to determine the
+   * layout to use.
+   **/
   const LO_PREFIX = 'Web>';
+  
+  /**
+   * Default primary key name
+   *
+   * Tables can be defined without explicit primary key name and when that's
+   * the case, use the following constant as the primary key name.
+   **/  
   const DEFAULT_PK = 'ID';
   
   const ERR_NO_MATCHING_RECORDS = 401;
