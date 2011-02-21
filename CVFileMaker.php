@@ -44,6 +44,8 @@ class CVFileMaker extends FileMaker {
    * returned, to return instead the record (FileMaker Record object). When
    * creating a new record, the return could be the id of the created record.
    *
+   * Possible values include 'result', 'records', and 'id'.
+   *
    * @var string
    **/
   protected $return = 'result';
@@ -198,7 +200,21 @@ class CVFileMaker extends FileMaker {
     $this->tables = $t;
   }
 
-  //============================================================================
+  /**
+   * Find all the records in the passed table.
+   *
+   * This is a wrapper for FileMaker's FileMaker_Command_FindAll and will return
+   * either the FileMaker_Result object or an array of FileMaker_Record objects,
+   * depending on the value of $this->return or the value of the return
+   * parameter.
+   *
+   * @param  array $options see the $format local variable for the definition of
+   *                        possible options.
+   * @return mixed          either a FileMaker_Result or an array of
+   *                        FileMaker_Record objects
+   * @access public
+   * @author Charles Ross
+   **/
   public function findAll( array $options ) {
     $format = array( 'required' => array( 'table' ),
                      'optional' => array( 'sort_orders', 'return' ) );
