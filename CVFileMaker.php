@@ -68,7 +68,19 @@ class CVFileMaker extends FileMaker {
   const ERR_NO_MATCHING_RECORDS = 401;
   const ERR_CALC_VALIDAITON = 507;
   
-  //============================================================================
+  /**
+   * The constructor for the class
+   *
+   * Sets up the database properties (as defined by the FileMaker class) and the
+   * table property of this class if they are passed to it. Otherwise it behaves
+   * just like the parent.
+   *
+   * @param  array $options an optional array of the table properties and
+   *                        database definition properties
+   * @return void
+   * @access public
+   * @author Charles Ross
+   **/
   public function __construct( $options = null ) {
     $optionsFormat = array( 'optional' => array( 'tables', 'properties' ) );
     
@@ -96,7 +108,18 @@ class CVFileMaker extends FileMaker {
     }
   }
 
-  //============================================================================
+  /**
+   * Magic method to provide access to protected properties when testing
+   *
+   * If a protected property is attempted to be accessed, this method is
+   * executed. If the caller indicates that it's a unit test, go ahead and
+   * provide access. Otherwise trigger an error.
+   *
+   * @param  string $name the name of the property to access
+   * @return mixed        depends on the property accessed
+   * @access public
+   * @author Charles Ross
+   **/
   public function __get( $name ) {
     if ( $this->_inTesting() ) {
       return $this->$name;
@@ -108,7 +131,19 @@ class CVFileMaker extends FileMaker {
     }
   }
 
-  //============================================================================
+  /**
+   * Magic method to provide access to protected methods when testing
+   *
+   * If a protected method is attempted to be accessed, this method is executed.
+   * If the caller indicates that it's a unit test, go ahead and provide access.
+   * Otherwise trigger an error.
+   *
+   * @param  string $name      the name of the method to access
+   * @param  array  $arguments the arguments to pass onto the protected method
+   * @return mixed             depends on the method accessed
+   * @access public
+   * @author Charles Ross
+   **/
   public function __call( $name, $arguments ) {
     if ( $this->_inTesting() ) {
       if ( $name == 'checkParams' ) {
