@@ -157,7 +157,20 @@ class CVFileMaker extends FileMaker {
     }
   }
 
-  //============================================================================
+  /**
+   * Set the tables to the passed parameter
+   *
+   * The $tables array can be a traditional array or a hash or a combination of
+   * the two. For any member of the array that does not have a value attached
+   * this method will assign default values to the layout and key keys.
+   *
+   * @param  string $tables the definition of the tables for the database with
+   *                        optional inclusion of the layout to use and the name
+   *                        of the primary key.
+   * @return void
+   * @access public
+   * @author Charles Ross
+   **/
   public function setTables( array $tables ) {
     $t = array();
     
