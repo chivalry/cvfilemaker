@@ -239,7 +239,21 @@ class CVFileMaker extends FileMaker {
     }
   }
   
-  //============================================================================
+  /**
+   * Find the records in the passed table with the given criteria.
+   *
+   * This is a wrapper for FileMaker's FileMaker_Command_Find and will return
+   * either the FileMaker_Result object or an array of FileMaker_Record objects,
+   * depending on the value of $this->return or the value of the return
+   * parameter.
+   *
+   * @param  array $options see the $format local variable for the definition of
+   *                        possible options.
+   * @return mixed          either a FileMaker_Result or an array of
+   *                        FileMaker_Record objects
+   * @access public
+   * @author Charles Ross
+   **/
   public function find( array $options ) {
     $format = array( 'required' => array( 'table', 'criteria' ),
                      'optional' => array( 'sort_orders', 'return' ) );
