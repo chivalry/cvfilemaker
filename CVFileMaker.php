@@ -355,7 +355,22 @@ class CVFileMaker extends FileMaker {
     }
   }
   
-  //============================================================================
+  /**
+   * Edit the record in the passed table with the given id.
+   *
+   * This is a wrapper for FileMaker's FileMaker_Command_Edit and will return
+   * either the FileMaker_Result object or the FileMaker_Record object,
+   * depending on the value of $this->return or the value of the return
+   * parameter.
+   *
+   * @param  array $options see the $format local variable for the definition of
+   *                        possible options. The id option refers to the
+   *                        primary key, not the record id.
+   * @return mixed          either a FileMaker_Result or an array of
+   *                        FileMaker_Record objects
+   * @access public
+   * @author Charles Ross
+   **/
   public function editRecord( array $options ) {
     $format = array( 'required' => array( 'table', 'data' ),
                      'mutual'   => array( 'record_id', 'id' ) );
@@ -380,13 +395,39 @@ class CVFileMaker extends FileMaker {
     $result = $editCmd->execute();
   }
   
-  //============================================================================
+  /**
+   * Return the first (generally only) record from a FileMaker_Result object.
+   *
+   * @param  FileMaker_Result $result
+   * @return FileMaker_Record
+   * @access public
+   * @author Charles Ross
+   **/
   public function getFirstRecord( FileMaker_Result $result ) {
     $recs = $result->getRecords();
     return $recs[0];
   }
   
-  //============================================================================
+  /**
+   * Check the parameters against the format provided.
+   *
+   * Generally, especially when multiple parameters are needed or offered by a
+   * method, they are passed as name/value pairs in an array. Each method can
+   * specify the expected format for the options passed. Valid keys include
+   * 'required', 'optional' and 'mutual'. 'required' options must be present,
+   * 'optional' parameters may be present, and 'mutual' is an array of mutually
+   * exclusive parameters, only one of which in any set can be present. This
+   * method (attempts) to confirm that the parameters conform to the format.
+   * "Attempts" because the mutual parameters do not appear to work entirely
+   * correctly yet, which means my unit test is off somehow. This is why this
+   * method isn't yet called to confirm the parameters of the editRecord method.
+   *
+   * @param  array $format the format that params should conform to
+   * @return array $params the parameters that were passed to the calling method
+   * @access protected
+   * @author Charles Ross
+   * @todo   Get 'mutual' format working correctly
+   **/
   protected function _checkParams( array $format, array $params ) {
     // Check that the params passed are all expected in the format.
     $validOptional = $validRequired = $validMutual = true;
