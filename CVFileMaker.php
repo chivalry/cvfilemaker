@@ -456,7 +456,19 @@ class CVFileMaker extends FileMaker {
     return $isParam && $requiredExists && $mutualsAreExclusive;
   }
   
-  //============================================================================
+  /**
+   * Check if the provided parameter is mutual.
+   *
+   * A mutual set is an array of strings, only one of which should be present.
+   * This funciton should simply check if the passed param is in one of the
+   * mutual sets.
+   *
+   * @param  array $mutualParamSets an array of mutual set arrays
+   * @param  array $params          the parameter to check against mutual sets
+   * @return boolean whether the param passed is a mutual parameter
+   * @access protected
+   * @author Charles Ross
+   **/
   protected function _isMutual( array $mutualParamSets, $param ) {
     $mutualParams = array();
     foreach ( $mutualParamSets as $mutualParamSet ) {
@@ -465,7 +477,18 @@ class CVFileMaker extends FileMaker {
     return in_array( $param, $mutualParams );
   }
 
-  //============================================================================
+  /**
+   * Check if the required parameters are present.
+   *
+   * For each of the required parameters, make sure that they are present in the
+   * supplied params.
+   *
+   * @param  array $requiredParams an array of the required parameters
+   * @param  array $params         an array of the parameters
+   * @return boolean whether the required params exist within the params
+   * @access protected
+   * @author Charles Ross
+   **/
   protected function _requiredParamsExist( array $requiredParams,
                                            array $params ) {
     $requiredExists = false;
@@ -476,7 +499,18 @@ class CVFileMaker extends FileMaker {
     return $requiredExists;
   }
   
-  //============================================================================
+  /**
+   * Make sure that the mutual parameters are exclusive.
+   *
+   * Given the mutual parameter sets, make sure that each set contains at most
+   * one parameter in params.
+   *
+   * @param  array $mutualParamSets an array of mutual set arrays
+   * @param  array $params          the parameters to check against mutual sets
+   * @return boolean whether the params sent are mutually exclusive
+   * @access protected
+   * @author Charles Ross
+   **/
   protected function _mutualParamsAreExclusive( array $mutualParamSets,
                                                 array $params ) {
     $mutualsAreExclusive = true;
@@ -489,7 +523,20 @@ class CVFileMaker extends FileMaker {
     return $mutualsAreExclusive;
   }
 
-  //============================================================================
+  /**
+   * Check if this object is being accessed in testing.
+   *
+   * Unit testing tests not only public but also protected variables and
+   * methods. During testing we want to provide access to these, but not during
+   * normal application execution. This function returns true if the caller
+   * backtrace indicates that we're intesting.
+   *
+   * @param  array $mutualParamSets an array of mutual set arrays
+   * @param  array $params          the parameter to check against mutual sets
+   * @return boolean whether the caller backtrace indicates testing
+   * @access protected
+   * @author Charles Ross
+   **/
   protected function _inTesting() {
     $traceRecs = debug_backtrace();
     $inTesting = false;
@@ -500,12 +547,30 @@ class CVFileMaker extends FileMaker {
     return $inTesting;
   }
   
-  //============================================================================
+  /**
+   * The layout for the current table.
+   *
+   * Returns the layout name, as defined by the table definition or the default
+   * layout name, for the current table.
+   *
+   * @return string the name of the appropriate layout
+   * @access protected
+   * @author Charles Ross
+   **/
   protected function _layout() {
     return $this->tables[$this->table]['layout'];
   }
 
-  //============================================================================
+  /**
+   * The primary key name for the current table.
+   *
+   * Returns the primary key name, as defined by the table definition or the
+   * default key name name, for the current table.
+   *
+   * @return string the name of the primary key
+   * @access protected
+   * @author Charles Ross
+   **/
   protected function _key() {
     return $this->tables[$this->table]['key'];
   }
