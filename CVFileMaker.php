@@ -409,6 +409,29 @@ class CVFileMaker extends FileMaker {
   }
   
   /**
+   * Returns the content type required for the container data.
+   *
+   * @return string the raw data for the passed container field.
+   * @author FileMaker, Inc.
+   **/
+  public function containerDataContentType( $path ) {
+    $url = substr( $path, 0, strpos( $path, '?' ) );
+    $url = substr( $url, strrpos( $url, '.' ) + 1 );
+    switch( $url ) {
+      case 'jpg':
+        $contentType = 'image/jpeg';
+        break;
+      case 'gif':
+        $contentType = 'image/gif';
+        break;
+      default:
+        $contentType = 'application/octet-stream';
+    }
+
+    return $contentType;
+  }
+  
+  /**
    * Check the parameters against the format provided.
    *
    * Generally, especially when multiple parameters are needed or offered by a
