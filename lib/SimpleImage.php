@@ -24,21 +24,40 @@
  **/
  
 class SimpleImage {
-   
+  
+  /**
+   * a reference to the current working image
+   *
+   * @var resource
+   **/
   var $image;
+  
+  /**
+   * a constant referring to the image type
+   *
+   * @var  integer
+   * @link http://www.php.net/manual/en/image.constants.php
+   **/
   var $image_type;
- 
+  
+  /**
+   * save after each change if true
+   *
+   * @var boolean
+   **/
+  var $autoSave = false;
+
   function load( $filename ) {
   $image_info = getimagesize( $filename );
     $this->image_type = $image_info[2];
     
-    if( $this->image_type == IMAGETYPE_JPEG ) {
+    if ( $this->image_type == IMAGETYPE_JPEG ) {
       $this->image = imagecreatefromjpeg( $filename );
       
-    } elseif( $this->image_type == IMAGETYPE_GIF ) {
+    } elseif ( $this->image_type == IMAGETYPE_GIF ) {
       $this->image = imagecreatefromgif( $filename );
       
-    } elseif( $this->image_type == IMAGETYPE_PNG ) {
+    } elseif ( $this->image_type == IMAGETYPE_PNG ) {
       $this->image = imagecreatefrompng( $filename );
     }
   }
@@ -105,6 +124,37 @@ class SimpleImage {
     imagecopyresampled( $new_image, $this->image, 0, 0, 0, 0, $width, $height,
       $this->getWidth(), $this->getHeight() );
     $this->image = $new_image;   
-  }      
+  }
+  
+  /**
+   * Resize the image so that neither dimension is larger than the param.
+   *
+   * @param  integer $dim
+   * @return void
+   * @access public
+   * @author Charles Ross
+   **/
+  function resizeToMaxSquare( $dim ) {
+    $this->resizeToMax( $dim, $dim );
+  }
+  
+  /**
+   * Resize the image within the constraints provided.
+   *
+   * @param  integer $dimW the max width
+   * @param  integer $dimW the max height
+   * @return void
+   * @access public
+   * @author Charles Ross
+   **/
+  function resizeToMax( $dimW, $dimH ) {
+    while ( $this->getWidth() > $dimW || $this->getHeight() > $dimH ) {
+      if ( $this->getWidth() > $dimW ) {
+        $this->resizeToWidth( $dimW );
+      } else {
+        $this->resizeToHeight( $dimH );
+      }
+    }
+  }
 }
 ?>

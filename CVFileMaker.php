@@ -82,6 +82,7 @@ class CVFileMaker extends FileMaker {
    * @return void
    * @access public
    * @author Charles Ross
+   * @todo   subclass FileMaker_Result to provide more functionality  
    **/
   public function __construct( $options = null ) {
     $optionsFormat = array( 'optional' => array( 'tables', 'properties' ) );
